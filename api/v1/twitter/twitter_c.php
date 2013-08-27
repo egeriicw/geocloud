@@ -5,7 +5,7 @@ class Twitter_c extends Controller
 
     function __construct()
     {
-        parent::__construct();
+        //parent::__construct();
         $this->tweet = new tweet();
     }
     public function search($search, $lifetime = 0)
