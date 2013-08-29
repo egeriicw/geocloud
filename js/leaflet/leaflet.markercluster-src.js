@@ -539,7 +539,9 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	//Default functionality
 	_defaultIconCreateFunction: function (cluster) {
+		//var childCount = cluster.getChildCount();
 		var childCount = cluster.getChildCount();
+        //console.log(cluster);
 
 		var c = ' marker-cluster-';
 		if (childCount < 10) {
@@ -549,8 +551,9 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 		} else {
 			c += 'large';
 		}
+        console.log(cluster)
 
-		return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		return new L.DivIcon({ html: '<div><span>' + childCount + '</span><br>hej</div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
 	},
 
 	_bindEvents: function () {
@@ -988,12 +991,15 @@ L.MarkerCluster = L.Marker.extend({
 
 		this._bounds = new L.LatLngBounds();
 
+        this._hoegh=[];
+
 		if (a) {
 			this._addChild(a);
 		}
 		if (b) {
 			this._addChild(b);
 		}
+
 	},
 
 	//Recursively retrieve all child markers of this cluster
@@ -1051,6 +1057,7 @@ L.MarkerCluster = L.Marker.extend({
 
 		this._iconNeedsUpdate = true;
 		this._expandBounds(new1);
+        //console.log(new1)
 
 		if (new1 instanceof L.MarkerCluster) {
 			if (!isNotificationFromChild) {
@@ -1058,16 +1065,23 @@ L.MarkerCluster = L.Marker.extend({
 				new1.__parent = this;
 			}
 			this._childCount += new1._childCount;
+
+            this._hoegh.push(new1._hoegh);
+
+
 		} else {
 			if (!isNotificationFromChild) {
 				this._markers.push(new1);
 			}
 			this._childCount++;
+
+            this._hoegh.push(new1.martin);
 		}
 
 		if (this.__parent) {
 			this.__parent._addChild(new1, true);
 		}
+
 	},
 
 	//Expand our bounds and tell our parent to
