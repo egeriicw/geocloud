@@ -45,9 +45,17 @@ var geocloud = (function () {
     }
     if (typeof L === "object") {
         MAPLIB = "leaflet";
-        document.write("<script src='http://local.mapcentia.com/js/leaflet/leaflet-google.js'><\/script>");
-        document.write("<script src='http://local.mapcentia.com/js/leaflet/leaflet-bing.js'><\/script>");
-        document.write("<link href='http://eu1.mapcentia.com/js/leaflet/leaflet.css' type='text/css' rel='stylesheet'>");
+        // The JavaScript
+        document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-google.js'><\/script>");
+        document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-bing.js'><\/script>");
+        document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet.markercluster-src.js'><\/script>");
+        document.write("<script src='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js'><\/script>");
+
+        // The css
+        document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet.css' type='text/css' rel='stylesheet'>");
+        document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.css' type='text/css' rel='stylesheet'>");
+        document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.Default.css' type='text/css' rel='stylesheet'>");
+        document.write("<link href='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css' type='text/css' rel='stylesheet'>");
     }
     document.write("<link rel='stylesheet' href='" + geocloud_host + "/api/v3/css/styles.css' type='text/css'>");
     extend = function (ChildClass, ParentClass) {
@@ -138,8 +146,8 @@ var geocloud = (function () {
             },
             lifetime: 0,
             selectControl: {},
-            movedEnd: function () {
-            },
+            /*movedEnd: function () {
+            },*/
             onLoad: function () {
             },
             onEachFeature: function () {
@@ -153,7 +161,7 @@ var geocloud = (function () {
         this.db = this.defaults.db;
         this.sql = this.defaults.sql;
         this.onLoad = this.defaults.onLoad;
-        this.movedEnd = this.defaults.movedEnd;
+        /*this.movedEnd = this.defaults.movedEnd;*/
         this.load = function (doNotShowAlertOnError) {
             var sql = this.sql;
             try {
@@ -212,8 +220,8 @@ var geocloud = (function () {
             },
             lifetime: 0,
             selectControl: {},
-            movedEnd: function () {
-            },
+            /*movedEnd: function () {
+            },*/
             onLoad: function () {
             }
         };
@@ -225,7 +233,7 @@ var geocloud = (function () {
         this.db = this.defaults.db;
         this.search = this.defaults.q;
         this.onLoad = this.defaults.onLoad;
-        this.movedEnd = this.defaults.movedEnd;
+        /*this.movedEnd = this.defaults.movedEnd;*/
         this.load = function (doNotShowAlertOnError) {
             var sql = this.sql;
             try {
