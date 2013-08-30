@@ -58,25 +58,33 @@ var geocloud = (function () {
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css' type='text/css' rel='stylesheet'>");
     }
     document.write("<link rel='stylesheet' href='" + geocloud_host + "/api/v3/css/styles.css' type='text/css'>");
+
+    // Helper for extending classes
     extend = function (ChildClass, ParentClass) {
         ChildClass.prototype = new ParentClass();
-        // ChildClass.prototype.constructor = ChildClass;
+        //ChildClass.prototype.constructor = ChildClass;
     };
-    storeClass = function (config) {
-        var prop;
+    // Base class for stores
+    storeClass = function () {
         this.defaults = {
             styleMap: null,
+            visibility: true,
+            lifetime: 0,
+            db: null,
+            sql: null,
+            q: null,
+            rendererOptions: { zIndexing: true },
+            projection: (MAPLIB === "leaflet") ? "4326" : "900913",
+            //Only leaflet
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng);
-            }, //Only leaflet
+            },
+            //Only leaflet
             onEachFeature: function () {
-            } //Only leaflet
-        };
-        if (config) {
-            for (prop in config) {
-                this.defaults[prop] = config[prop];
+            },
+            onLoad: function () {
             }
-        }
+        };
         this.hide = function () {
             this.layer.setVisibility(false);
         };
@@ -84,42 +92,27 @@ var geocloud = (function () {
             this.layer.setVisibility(true);
         };
         this.map = null;
-        switch (MAPLIB) {
-            case "ol2":
-                this.layer = new OpenLayers.Layer.Vector("Vector", {
-                    styleMap: this.defaults.styleMap,
-                    visibility: this.defaults.visibility,
-                    renderers: ['Canvas', 'SVG', 'VML'],
-                    rendererOptions: this.defaults.rendererOptions/*,
-                     strategies: [new OpenLayers.Strategy.AnimatedCluster({
-                     //strategies : [new OpenLayers.Strategy.Cluster({
-                     distance: 45,
-                     animationMethod: OpenLayers.Easing.Expo.easeOut,
-                     animationDuration: 10,
-                     autoActivate: false
-                     })]*/
-                });
-                break;
-            case "leaflet":
-                this.layer = L.geoJson(null, {
-                    style: this.defaults.styleMap,
-                    pointToLayer: this.defaults.pointToLayer,
-                    onEachFeature: this.defaults.onEachFeature
-                });
-                this.layer.id = this.defaults.name;
-                break;
-        }
-        this.clusterDeactivate = function () {
-            parentThis.layer.strategies[0].deactivate();
-            parentThis.layer.refresh({
-                forces: true
-            });
-        };
-        this.clusterActivate = function () {
-            parentThis.layer.strategies[0].activate();
-            parentThis.layer.refresh({
-                forces: true
-            });
+        // Initiate base class settings
+        this.init = function () {
+            this.onLoad = this.defaults.onLoad;
+            switch (MAPLIB) {
+                case 'ol2':
+                    this.layer = new OpenLayers.Layer.Vector("Vector", {
+                        styleMap: this.defaults.styleMap,
+                        visibility: this.defaults.visibility,
+                        renderers: ['Canvas', 'SVG', 'VML'],
+                        rendererOptions: this.defaults.rendererOptions
+                    });
+                    break;
+                case 'leaflet':
+                    this.layer = L.geoJson(null, {
+                        style: this.defaults.styleMap,
+                        pointToLayer: this.defaults.pointToLayer,
+                        onEachFeature: this.defaults.onEachFeature
+                    });
+                    this.layer.id = this.defaults.name;
+                    break;
+            }
         };
         this.geoJSON = {};
         this.featureStore = null;
@@ -131,39 +124,16 @@ var geocloud = (function () {
         };
     };
     geoJsonStore = sqlStore = function (config) {
-        storeClass.call(this, config);
         var prop, parentThis = this;
-        this.defaults = {
-            db: null,
-            sql: null,
-            id: "vector",
-            styleMap: null,
-            projection: (MAPLIB === "leaflet") ? "4326" : "900913",
-            strategies: null,
-            visibility: true,
-            rendererOptions: {
-                zIndexing: true
-            },
-            lifetime: 0,
-            selectControl: {},
-            /*movedEnd: function () {
-            },*/
-            onLoad: function () {
-            },
-            onEachFeature: function () {
-            } //Only leaflet
-        };
         if (config) {
             for (prop in config) {
                 this.defaults[prop] = config[prop];
             }
         }
-        this.db = this.defaults.db;
-        this.sql = this.defaults.sql;
-        this.onLoad = this.defaults.onLoad;
-        /*this.movedEnd = this.defaults.movedEnd;*/
+        this.init();
+
         this.load = function (doNotShowAlertOnError) {
-            var sql = this.sql;
+            var sql = this.defaults.sql;
             try {
                 var map = parentThis.map;
                 sql = sql.replace("{centerX}", map.getCenter().lat.toString());
@@ -179,7 +149,7 @@ var geocloud = (function () {
                 dataType: 'jsonp',
                 data: 'q=' + encodeURIComponent(sql) + '&srs=' + this.defaults.projection + '&lifetime=' + this.defaults.lifetime + "&srs=" + this.defaults.projection,
                 jsonp: 'jsonp_callback',
-                url: host + '/api/v1/sql/' + this.db,
+                url: host + '/api/v1/sql/' + this.defaults.db,
                 success: function (response) {
                     if (response.success === false && doNotShowAlertOnError === undefined) {
                         alert(response.message);
@@ -206,52 +176,31 @@ var geocloud = (function () {
         };
     };
     tweetStore = function (config) {
-        storeClass.call(this, config);
         var prop, parentThis = this;
-        this.defaults = {
-            db: null,
-            search: null,
-            id: "tweets",
-            projection: (MAPLIB === "leaflet") ? "4326" : "900913",
-            strategies: null,
-            visibility: true,
-            rendererOptions: {
-                zIndexing: true
-            },
-            lifetime: 0,
-            selectControl: {},
-            /*movedEnd: function () {
-            },*/
-            onLoad: function () {
-            }
-        };
         if (config) {
             for (prop in config) {
                 this.defaults[prop] = config[prop];
             }
         }
-        this.db = this.defaults.db;
-        this.search = this.defaults.q;
-        this.onLoad = this.defaults.onLoad;
-        /*this.movedEnd = this.defaults.movedEnd;*/
+        this.init();
         this.load = function (doNotShowAlertOnError) {
-            var sql = this.sql;
+            var q = this.defaults.q;
             try {
                 var map = parentThis.map;
-                sql = sql.replace("{centerX}", map.getCenter().lat.toString());
-                sql = sql.replace("{centerY}", map.getCenter().lon.toString());
-                sql = sql.replace("{minX}", map.getExtent().left);
-                sql = sql.replace("{maxX}", map.getExtent().right);
-                sql = sql.replace("{minY}", map.getExtent().bottom);
-                sql = sql.replace("{maxY}", map.getExtent().top);
-                sql = sql.replace("{bbox}", map.getExtent().toString());
+                q = q.replace("{centerX}", map.getCenter().lat.toString());
+                q = q.replace("{centerY}", map.getCenter().lon.toString());
+                q = q.replace("{minX}", map.getExtent().left);
+                q = q.replace("{maxX}", map.getExtent().right);
+                q = q.replace("{minY}", map.getExtent().bottom);
+                q = q.replace("{maxY}", map.getExtent().top);
+                q = q.replace("{bbox}", map.getExtent().toString());
             } catch (e) {
             }
             $.ajax({
                 dataType: 'jsonp',
-                data: 'search=' + encodeURIComponent(this.defaults.search),
+                data: 'search=' + encodeURIComponent(q),
                 jsonp: 'jsonp_callback',
-                url: host + '/api/v1/twitter/' + this.db,
+                url: host + '/api/v1/twitter/' + this.defaults.db,
                 success: function (response) {
                     if (response.success === false && doNotShowAlertOnError === undefined) {
                         alert(response.message);
@@ -273,14 +222,16 @@ var geocloud = (function () {
                 complete: function () {
                     parentThis.onLoad();
                 }
-
             });
         };
     };
-    //extend(sqlStore, storeClass);
-    //extend(tweetStore, storeClass)
+    // Extend classes
+    extend(sqlStore, storeClass);
+    extend(tweetStore, storeClass);
+
+    // Set map constructor
     map = function (config) {
-        var prop, popup, queryLayers = [], parentMap,
+        var prop, queryLayers = [],
             defaults = {
                 numZoomLevels: 20,
                 projection: "EPSG:900913"
@@ -291,7 +242,6 @@ var geocloud = (function () {
             }
         }
         this.bingApiKey = null;
-        parentMap = this;
         //ol2, ol3
         this.zoomToExtent = function (extent, closest) {
             switch (MAPLIB) {
