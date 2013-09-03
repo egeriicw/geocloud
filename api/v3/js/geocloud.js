@@ -48,14 +48,14 @@ var geocloud = (function () {
         // The JavaScript
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-google.js'><\/script>");
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-bing.js'><\/script>");
-        document.write("<script src='http://local.mapcentia.com/js/leaflet/leaflet.markercluster-src.js'><\/script>");
+        document.write("<script src='http://eu1.mapcentia.com/js/leaflet/leaflet.markercluster-src.js'><\/script>");
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js'><\/script>");
 
         // The css
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet.css' type='text/css' rel='stylesheet'>");
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.css' type='text/css' rel='stylesheet'>");
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.Default.css' type='text/css' rel='stylesheet'>");
-        document.write("<link href='http://eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css' type='text/css' rel='stylesheet'>");
+        document.write("<link href='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css' type='text/css' rel='stylesheet'>");
     }
     document.write("<link rel='stylesheet' href='" + geocloud_host + "/api/v3/css/styles.css' type='text/css'>");
 
