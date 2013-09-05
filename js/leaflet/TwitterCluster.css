@@ -1,9 +1,9 @@
 .twitter-cluster {
-	background-color: rgba(10, 118, 190, 0.30);
+	background-color: none;
     z-index: 10000 !important;
 	}
 .twitter-cluster div {
-	background-color: rgba(10, 118, 190, 0.60);
+	background-color: none;
 
 	}
 .twitter-cluster {
