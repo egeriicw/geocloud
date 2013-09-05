@@ -54,7 +54,7 @@ var geocloud = (function () {
         // The css
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet.css' type='text/css' rel='stylesheet'>");
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.css' type='text/css' rel='stylesheet'>");
-        document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.Default.css' type='text/css' rel='stylesheet'>");
+        //document.write("<link href='http://cdn.eu1.mapcentia.com/js/leaflet/MarkerCluster.Default.css' type='text/css' rel='stylesheet'>");
         document.write("<link href='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css' type='text/css' rel='stylesheet'>");
     }
     document.write("<link rel='stylesheet' href='" + geocloud_host + "/api/v3/css/styles.css' type='text/css'>");
