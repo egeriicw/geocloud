@@ -1,8 +1,10 @@
 .twitter-cluster {
-	background-color: rgba(130, 144, 226, 0.60);
+	background-color: rgba(10, 118, 190, 0.30);
+    z-index: 10000 !important;
 	}
 .twitter-cluster div {
-	background-color: rgba(52, 51, 204, 0.60);
+	background-color: rgba(10, 118, 190, 0.60);
+
 	}
 .twitter-cluster {
 	background-clip: padding-box;
