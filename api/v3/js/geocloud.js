@@ -59,6 +59,7 @@ var geocloud = (function () {
     }
     document.write("<link rel='stylesheet' href='" + geocloud_host + "/api/v3/css/styles.css' type='text/css'>");
 
+
     // Helper for extending classes
     extend = function (ChildClass, ParentClass) {
         ChildClass.prototype = new ParentClass();

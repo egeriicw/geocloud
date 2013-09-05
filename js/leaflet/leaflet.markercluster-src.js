@@ -542,7 +542,6 @@
 
         //Default functionality
         _defaultIconCreateFunction: function (cluster) {
-            console.log(cluster)
             var childCount = cluster.getChildCount();
             var c = ' marker-cluster-';
             if (childCount < 10) {
