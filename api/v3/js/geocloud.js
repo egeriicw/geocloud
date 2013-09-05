@@ -48,7 +48,7 @@ var geocloud = (function () {
         // The JavaScript
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-google.js'><\/script>");
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet-bing.js'><\/script>");
-        document.write("<script src='http://cdn.eu1.mapcentia.com/js/leaflet/leaflet.markercluster-src.js'><\/script>");
+        document.write("<script src='http://eu1.mapcentia.com/js/leaflet/leaflet.markercluster-src.js'><\/script>");
         document.write("<script src='http://cdn.eu1.mapcentia.com/js/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js'><\/script>");
 
         // The css
