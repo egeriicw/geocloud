@@ -37,6 +37,7 @@
         },
 
         initialize: function (options) {
+
             L.Util.setOptions(this, options);
             if (!this.options.iconCreateFunction) {
                 this.options.iconCreateFunction = this._defaultIconCreateFunction;
@@ -53,9 +54,11 @@
             this._needsRemoving = []; //Markers removed while we aren't on the map need to be kept track of
             //The bounds of the currently shown area (from _getExpandedVisibleBounds) Updated on zoom/move
             this._currentShownBounds = null;
+            this.vigga = this.options.vigga;
+
         },
 
-        addLayer: function (layer) {
+        addLayer: function (layer, e) {
 
             if (layer instanceof L.LayerGroup) {
                 var array = [];
@@ -539,6 +542,7 @@
 
         //Default functionality
         _defaultIconCreateFunction: function (cluster) {
+            console.log(cluster)
             var childCount = cluster.getChildCount();
             var c = ' marker-cluster-';
             if (childCount < 10) {
@@ -548,11 +552,9 @@
             } else {
                 c += 'large';
             }
-            //console.log(cluster._hoegh)
             var track = [];
             var n;
             var obj = {};
-            var tagCloud = "";
 
             (function loop(arr) {
                 for (var i = 0; i < arr.length; i++) {
@@ -563,6 +565,7 @@
                             track.push(arr[i].id);
                             if (n = arr[i].text.match(/#\S*/gi)) {
                                 for (var u = 0; u < n.length; u++) {
+                                    n[u] = n[u].toLowerCase();
                                     if (typeof obj[n[u]] === "undefined") {
                                         obj[n[u]] = 1;
                                     }
@@ -575,7 +578,6 @@
                     }
                 }
             })(cluster._hoegh)
-            // console.log(obj);
             var sortable = [];
             for (var count in obj) {
                 sortable.push([count, obj[count]]);
@@ -583,19 +585,10 @@
             sortable.sort(function (a, b) {
                 return b[1] - a[1]
             });
-            sortable = sortable.splice(0, 6).sort(function() { return 0.5 - Math.random();});
-            //console.log(sortable);
-            var m = 0;
-            $.each(sortable, function (index, value) {
-                tagCloud = tagCloud + "<span style='padding:2px;opacity:0.8;background-color:#000000;color: white;font-size: " + (70 + (value[1] * 30)) + "%'>" + value[0] + "</span> ";
-                if (((m / 2) % 1) === 0) {
-                    tagCloud = tagCloud + "<br>";
-                }
-                m++;
+            sortable = sortable.splice(0, 6).sort(function () {
+                return 0.5 - Math.random();
             });
-            var left = -80;
-            var top = (m > 3) ? 25 : 50;
-            return new L.DivIcon({ html: '<div><span>' + childCount + '</span><span id="tag" style="display: inline;pointer-events:none;overflow:sd;border: 0px solid white;height:150px;top:-80px;left:' + left + 'px;position: absolute;width: 200px"><span style="position:relative; top:' + top + '%;">' + tagCloud + '</span></span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+            return cluster.vigga(sortable, childCount);
         },
 
         _bindEvents: function () {
@@ -718,6 +711,7 @@
         },
 
         //Zoom: Zoom to start adding at (Pass this._maxZoom to start at the bottom)
+
         _addLayer: function (layer, zoom) {
             var gridClusters = this._gridClusters,
                 gridUnclustered = this._gridUnclustered,
@@ -1025,6 +1019,7 @@
 
             this._group = group;
             this._zoom = zoom;
+            this.vigga = group.vigga;
 
             this._markers = [];
             this._childClusters = [];
@@ -1043,7 +1038,6 @@
             }
 
         },
-
         //Recursively retrieve all child markers of this cluster
         getAllChildMarkers: function (storageArray) {
             storageArray = storageArray || [];
@@ -1099,7 +1093,6 @@
 
             this._iconNeedsUpdate = true;
             this._expandBounds(new1);
-            //console.log(new1)
 
             if (new1 instanceof L.MarkerCluster) {
                 if (!isNotificationFromChild) {
