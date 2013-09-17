@@ -135,6 +135,7 @@ var geocloud = (function () {
         this.init();
         this.sql = this.defaults.sql;
         this.load = function (doNotShowAlertOnError) {
+            var url = host.replace("cdn", "");
             try {
                 var map = parentThis.map, sql= this.sql;
                 sql = sql.replace("{centerX}", map.getCenter().lat.toString());
@@ -150,7 +151,7 @@ var geocloud = (function () {
                 dataType: 'jsonp',
                 data: 'q=' + encodeURIComponent(sql) + '&srs=' + this.defaults.projection + '&lifetime=' + this.defaults.lifetime + "&srs=" + this.defaults.projection,
                 jsonp: 'jsonp_callback',
-                url: host + '/api/v1/sql/' + this.defaults.db,
+                url: url + '/api/v1/sql/' + this.defaults.db,
                 success: function (response) {
                     if (response.success === false && doNotShowAlertOnError === undefined) {
                         alert(response.message);
