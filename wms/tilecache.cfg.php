@@ -43,7 +43,7 @@ function makeTileCacheFile($user, $extentLayer = NULL)
         $layerArr[] = $row['f_table_schema'] . "." . $row['f_table_name'];
         $def = json_decode($row['def']);
         $def->meta_tiles == true ? $meta_tiles = "yes" : $meta_tiles = "no";
-        $def->ttl < 30 ? $expire = 30 : $expire = $def->ttl;
+        $def->ttl < 30 ? $expire = 120 : $expire = $def->ttl;
         echo "[{$row['f_table_schema']}.{$row['f_table_name']}]\n";
         echo "type=WMS\n";
         echo "url={$hostName}/wms/{$user}/{$row['f_table_schema']}/?";
