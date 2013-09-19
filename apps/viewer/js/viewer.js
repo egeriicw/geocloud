@@ -1,7 +1,7 @@
 var MapCentia;
 MapCentia = (function () {
     "use strict";
-    var hostname, cloud, db, schema, uri, hash, osm, mapQuestOSM, mapQuestAerial, stamenToner, GNORMAL, GHYBRID, GSATELLITE, GTERRAIN, toner, popUpVectors, modalVectors;
+    var hostname, cloud, db, schema, uri, hash, osm, mapQuestOSM, mapQuestAerial, stamenToner, GNORMAL, GHYBRID, GSATELLITE, GTERRAIN, toner, popUpVectors, modalVectors, showInfoModal;
     hostname = geocloud_host;
     uri = geocloud.pathName;
     hash = geocloud.urlHash;
@@ -147,14 +147,19 @@ MapCentia = (function () {
                 $("#modal-layers .modal-body").append($('#layers'));
                 $("#modal-base-layers .modal-body").append($("#base-layers"));
                 $("#modal-legend .modal-body").append($("#legend"));
+                showInfoModal = function(){
+                    $('#modal-info').modal();
+                    $('#modal-info').on('hidden', function(){
+                        $(this).data('modal', null);
+                    });
+                }
                 //clickModal.activate();
             },
             exit: function () {
                 $('#modal-layers').modal('hide');
                 $('#modal-base-layers').modal('hide');
                 $('#modal-legend').modal('hide');
-                $('#modal-info').modal('hide');
-                //clickModal.deactivate();
+                $('#modal-info').modal('hide').data('modal', null);
                 //modalVectors.removeAllFeatures();
             }
         });
@@ -179,6 +184,13 @@ MapCentia = (function () {
                 $('#legend-popover').on('click', function (e) {
                     addLegend();
                 });
+                showInfoModal = function(){
+                    $('#modal-info').modal({backdrop:false});
+                    $('#modal-info').on('hidden', function(){
+                        $(this).data('modal', null);
+                    });
+
+                };
                 //clickPopUp.activate();
             },
             exit: function () {
@@ -186,6 +198,7 @@ MapCentia = (function () {
                 $("#layers-popover").popover('show');
                 $("#base-layers-popover").popover('show');
                 $("#legend-popover").popover('show');
+                $('#modal-info').modal('hide');
                 addLegend();
                 //clickPopUp.deactivate();
                 try {
@@ -197,7 +210,7 @@ MapCentia = (function () {
         });
         //Set up the state from the URI
         (function () {
-            var name, p, arr, i, hashArr;
+            var p, arr, i, hashArr;
             hashArr = hash.replace("#", "").split("/");
             if (hashArr[0]) {
                 $(".base-map-button").removeClass("active");
@@ -253,7 +266,7 @@ MapCentia = (function () {
                         var arr = [];
                         if (response.html !== false && response.html !== "") {
                             $("#modal-info .modal-body").html(response.html);
-                            $('#modal-info').modal('show');
+                            showInfoModal();
                             for (var i = 0; i < response.renderGeometryArray.length; ++i) {
                                 arr.push(response.renderGeometryArray[i][0]);
                             }
@@ -269,6 +282,7 @@ MapCentia = (function () {
         })
     });
     return{
+        cloud: cloud,
         switchLayer: switchLayer,
         setBaseLayer: setBaseLayer,
         schema: schema

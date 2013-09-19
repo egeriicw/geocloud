@@ -1043,13 +1043,13 @@ var geocloud = (function () {
         };
         // ol3
         this.locate = function () {
-            var center;
+/*            var center;
             var geolocation = new ol.Geolocation();
             geolocation.setTracking(true);
             geolocation.bindTo('projection', this.map.getView());
             var marker = new ol.Overlay({
                 map: this.map,
-                element: /** @type {Element} */ ($('<i/>').addClass('icon-flag').get(0))
+                element: *//** @type {Element} *//* ($('<i/>').addClass('icon-flag').get(0))
             });
             // bind the marker position to the device location.
             marker.bindTo('position', geolocation);
@@ -1059,7 +1059,10 @@ var geocloud = (function () {
                 $(marker.getElement()).tooltip({
                     title: this.getAccuracy() + 'm from this point'
                 });
-            });
+            });*/
+            this.map.locate({
+                setView: true
+            })
         }
         //ol2 and leaflet
         this.addLayerFromWkt = function (elements) { // Take 4326
@@ -1199,7 +1202,7 @@ var geocloud = (function () {
                     break;
             }
         }
-    }
+    };
     transformPoint = function (lat, lon, s, d) {
         var source = new Proj4js.Proj(s);    //source coordinates will be in Longitude/Latitude
         var dest = new Proj4js.Proj(d);
@@ -1207,6 +1210,7 @@ var geocloud = (function () {
         Proj4js.transform(source, dest, p);
         return p;
     };
+
     return {
         geoJsonStore: geoJsonStore,
         sqlStore: sqlStore,
