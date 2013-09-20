@@ -22,7 +22,7 @@ class Sql_to_es extends postgis
             $arrayWithFields = $this->getMetaData($view);
             foreach ($arrayWithFields as $key => $arr) {
                 if ($arr['type'] == "geometry") {
-                    $fieldsArr[] = "ST_asGeoJson(ST_Transform(" . $key . "," . $this->srs . "),5) as " . $key;
+                    $fieldsArr[] = "ST_asGeoJson(ST_Transform(" . $key . "," . $this->srs . "),2) as " . $key;
                 } else {
                     $fieldsArr[] = $key;
                 }
