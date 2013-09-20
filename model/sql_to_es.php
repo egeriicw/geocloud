@@ -3,7 +3,7 @@ class Sql_to_es extends postgis
 {
     var $srs;
 
-    function __construct($srs = "900913")
+    function __construct($srs = "4326")
     {
         parent::__construct();
         $this->srs = $srs;
