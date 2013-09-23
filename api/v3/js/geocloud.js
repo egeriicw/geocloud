@@ -169,7 +169,6 @@ var geocloud = (function () {
                         alert(response.message);
                     }
                     if (response.success === true) {
-                        console.log(response);
                         if (response.features !== null) {
                             parentThis.geoJSON = response;
                             switch (MAPLIB) {
