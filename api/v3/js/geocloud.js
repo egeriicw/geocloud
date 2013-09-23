@@ -15,6 +15,7 @@ var geocloud = (function () {
         geoJsonStore,
         sqlStore,
         tweetStore,
+        elasticStore,
         clickEvent,
         transformPoint,
         lControl,
@@ -33,6 +34,8 @@ var geocloud = (function () {
         BINGAERIALWITHLABELS = "bingAerialWithLabels";
     // In IE7 host name is missing if script url is relative
     geocloud_host = host = (scriptSource.charAt(0) === "/") ? "" : scriptSource.split("/")[0] + "//" + scriptSource.split("/")[2];
+
+    //host = "http://us1.mapcentia.com";
     document.write("<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'><\/script>");
     if (typeof ol !== "object" && typeof L !== "object" && typeof OpenLayers !== "object") {
         alert("You need to load neither OpenLayers.js, ol3,js or Leaflet.js");
@@ -85,7 +88,9 @@ var geocloud = (function () {
             onEachFeature: function () {
             },
             onLoad: function () {
-            }
+            },
+            index: "",
+            type: ""
         };
         this.hide = function () {
             this.layer.setVisibility(false);
@@ -119,7 +124,14 @@ var geocloud = (function () {
         this.geoJSON = {};
         this.featureStore = null;
         this.reset = function () {
-            this.layer.destroyFeatures();
+            switch (MAPLIB) {
+                case "ol2":
+                    this.layer.destroyFeatures();
+                    break;
+                case "leaflet":
+                    this.layer.clearLayers();
+                    break;
+            }
         };
         this.getWKT = function () {
             return new OpenLayers.Format.WKT().write(this.layer.features);
@@ -137,7 +149,7 @@ var geocloud = (function () {
         this.load = function (doNotShowAlertOnError) {
             var url = host.replace("cdn", "");
             try {
-                var map = parentThis.map, sql= this.sql;
+                var map = parentThis.map, sql = this.sql;
                 sql = sql.replace("{centerX}", map.getCenter().lat.toString());
                 sql = sql.replace("{centerY}", map.getCenter().lon.toString());
                 sql = sql.replace("{minX}", map.getExtent().left);
@@ -157,6 +169,7 @@ var geocloud = (function () {
                         alert(response.message);
                     }
                     if (response.success === true) {
+                        console.log(response);
                         if (response.features !== null) {
                             parentThis.geoJSON = response;
                             switch (MAPLIB) {
@@ -227,9 +240,61 @@ var geocloud = (function () {
             });
         };
     };
+    elasticStore = function (config) {
+        var prop, parentThis = this;
+        if (config) {
+            for (prop in config) {
+                this.defaults[prop] = config[prop];
+            }
+        }
+        this.init();
+        this.q = this.defaults.q;
+        this.load = function (doNotShowAlertOnError) {
+            try {
+                var map = parentThis.map, q = this.q;
+                q = q.replace("{centerX}", map.getCenter().lat.toString());
+                q = q.replace("{centerY}", map.getCenter().lon.toString());
+                q = q.replace("{minX}", map.getExtent().left);
+                q = q.replace("{maxX}", map.getExtent().right);
+                q = q.replace("{minY}", map.getExtent().bottom);
+                q = q.replace("{maxY}", map.getExtent().top);
+                q = q.replace("{bbox}", map.getExtent().toString());
+            } catch (e) {
+            }
+            $.ajax({
+                dataType: 'jsonp',
+                data: 'q=' + encodeURIComponent(q),
+                jsonp: 'jsonp_callback',
+                url: host + '/api/v1/elasticsearch/search/' + this.defaults.db + "/" + this.defaults.index + "/" + this.defaults.type,
+                success: function (response) {
+                    var features = [];
+                    $.each(response.hits.hits, function (i, v) {
+                        features.push(v._source);
+                    })
+                    response.features = features;
+                    if (response.features !== null) {
+                        parentThis.geoJSON = response;
+                        switch (MAPLIB) {
+                            case "ol2":
+                                parentThis.layer.addFeatures(new OpenLayers.Format.GeoJSON().read(response));
+                                break;
+                            case "leaflet":
+                                parentThis.layer.addData(response);
+                                break;
+                        }
+                    }
+
+                },
+                complete: function () {
+                    parentThis.onLoad();
+                }
+            });
+        };
+    };
     // Extend classes
     extend(sqlStore, storeClass);
     extend(tweetStore, storeClass);
+    extend(elasticStore, storeClass);
 
     // Set map constructor
     map = function (config) {
@@ -1043,23 +1108,25 @@ var geocloud = (function () {
         };
         // ol3
         this.locate = function () {
-/*            var center;
-            var geolocation = new ol.Geolocation();
-            geolocation.setTracking(true);
-            geolocation.bindTo('projection', this.map.getView());
-            var marker = new ol.Overlay({
-                map: this.map,
-                element: *//** @type {Element} *//* ($('<i/>').addClass('icon-flag').get(0))
-            });
-            // bind the marker position to the device location.
-            marker.bindTo('position', geolocation);
-            geolocation.addEventListener('accuracy_changed', function () {
-                center = ol.projection.transform([geolocation.a[0], geolocation.a[1]], 'EPSG:4326', 'EPSG:900913');
-                this.zoomToPoint(center[0], center[1], 1000);
-                $(marker.getElement()).tooltip({
-                    title: this.getAccuracy() + 'm from this point'
-                });
-            });*/
+            /*            var center;
+             var geolocation = new ol.Geolocation();
+             geolocation.setTracking(true);
+             geolocation.bindTo('projection', this.map.getView());
+             var marker = new ol.Overlay({
+             map: this.map,
+             element: */
+            /** @type {Element} */
+            /* ($('<i/>').addClass('icon-flag').get(0))
+             });
+             // bind the marker position to the device location.
+             marker.bindTo('position', geolocation);
+             geolocation.addEventListener('accuracy_changed', function () {
+             center = ol.projection.transform([geolocation.a[0], geolocation.a[1]], 'EPSG:4326', 'EPSG:900913');
+             this.zoomToPoint(center[0], center[1], 1000);
+             $(marker.getElement()).tooltip({
+             title: this.getAccuracy() + 'm from this point'
+             });
+             });*/
             this.map.locate({
                 setView: true
             })
@@ -1214,6 +1281,7 @@ var geocloud = (function () {
     return {
         geoJsonStore: geoJsonStore,
         sqlStore: sqlStore,
+        elasticStore: elasticStore,
         tweetStore: tweetStore,
         map: map,
         MAPLIB: MAPLIB,
