@@ -16,7 +16,7 @@ class Search_c extends Controller
         $index = implode(",",$arr);
         $ch = curl_init("http://localhost:9200/{$index}/{$parts[7]}/_search?pretty={$pretty}&size={$size}");
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $q);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, urldecode($q));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         $buffer = curl_exec($ch);
         curl_close($ch);
