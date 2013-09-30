@@ -1784,7 +1784,8 @@
             group._forceLayout();
             group._animationStart();
 
-            var initialLegOpacity = L.Path.SVG ? 0 : 0.3,
+            var initialLegOpacity = L.Path.SVG ? 0 : 0,
+//            var initialLegOpacity = L.Path.SVG ? 0 : 0.3,
                 xmlns = L.Path.SVG_NS;
 
 
