@@ -32,7 +32,7 @@ class Tweet extends postgis
 
             $sql = "SELECT max(id) from {$schema}.tweets";
             $row = $this->fetchRow($this->execQuery($sql), "assoc");
-            $search .= "&since_id%3D=" . $row['max'];
+            //$search .= "&since_id%3D=" . $row['max'];
         }
         /** Note: Set the GET field BEFORE calling buildOauth(); **/
         $url = 'https://api.twitter.com/1.1/search/tweets.json';
