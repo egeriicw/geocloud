@@ -1,5 +1,4 @@
 <?php
-$postgisdb = "mh";
 class Twitter_c extends Controller
 {
     private $tweet;
@@ -7,9 +6,10 @@ class Twitter_c extends Controller
 
     function __construct()
     {
+        global $postgisdb;
         //parent::__construct();
         $this->parts = $this->getUrlParts();
-//        $postgisdb = $this->parts[4];
+        $postgisdb = $this->parts[4];
         $this->tweet = new tweet();
     }
 
