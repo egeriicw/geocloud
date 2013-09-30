@@ -147,7 +147,7 @@ var geocloud = (function () {
         this.init();
         this.sql = this.defaults.sql;
         this.load = function (doNotShowAlertOnError) {
-            var url = host.replace("cdn", "");
+            var url = host.replace("cdn.", "");
             try {
                 var map = parentThis.map, sql = this.sql;
                 sql = sql.replace("{centerX}", map.getCenter().lat.toString());
