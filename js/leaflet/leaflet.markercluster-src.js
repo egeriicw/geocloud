@@ -1747,7 +1747,8 @@
                 map.addLayer(leg);
                 m._spiderLeg = leg;
             }
-            this.setOpacity(0.3);
+            this.setOpacity(0.0);
+            //this.setOpacity(0.3);
             group.fire('spiderfied');
         },
 
@@ -1835,7 +1836,8 @@
                 leg._path.appendChild(anim);
                 anim.beginElement();
             }
-            me.setOpacity(0.3);
+            me.setOpacity(0.0);
+            //me.setOpacity(0.3);
 
             //Set the opacity of the spiderLegs back to their correct value
             // The animations above override this until they complete.
