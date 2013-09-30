@@ -21,10 +21,18 @@ class Tweet extends postgis
     public function search($search, $store = false, $schema = null)
     {
         $schema = ($schema) ? : "public";
+        $sql = file_get_contents("../../../maintenance/tweets.sql");
+
         if ($store) {
+            // Using native PG driver for multi commands
+            $this->execQuery("SET search_path TO " . $schema.",public","PG");
+            $this->execQuery($sql,"PG");
+            // Closing connection, so it reopens with PDO driver
+            $this->close();
+
             $sql = "SELECT max(id) from {$schema}.tweets";
             $row = $this->fetchRow($this->execQuery($sql), "assoc");
-            $search.= "&since_id%3D=".$row['max'];
+            $search .= "&since_id%3D=" . $row['max'];
         }
         /** Note: Set the GET field BEFORE calling buildOauth(); **/
         $url = 'https://api.twitter.com/1.1/search/tweets.json';
@@ -89,7 +97,6 @@ class Tweet extends postgis
         $response['success'] = true;
         $response['type'] = "FeatureCollection";
         $response['features'] = $features;
-        //print_r(json_encode($response));
         return ($response);
     }
 }
