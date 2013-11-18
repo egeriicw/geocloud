@@ -72,7 +72,7 @@ class Tweet extends postgis
                 $features[] = array("geometry" => $value->coordinates, "type" => "Feature", "properties" => $bindings);
                 if ($store) {
                     $bindings['the_geom'] = "POINT(" . $value->coordinates->coordinates[0] . " " . $value->coordinates->coordinates[1] . ")";
-                    $sql = "INSERT INTO {$schema}.tweets (id,text,created_at,source,user_name,user_screen_name,user_id,place_id,place_type,place_full_name,place_country_code,place_country,retweet_count,favorite_count,the_geom) VALUES(" .
+                    $sql = "INSERT INTO {$schema}.tweets (id,text,created_at,source,user_name,user_screen_name,user_id,place_id,place_type,place_full_name,place_country_code,place_country,retweet_count,favorite_count,media,the_geom) VALUES(" .
                         ":id," .
                         ":text," .
                         ":created_at," .
