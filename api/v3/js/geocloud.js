@@ -521,11 +521,7 @@ var geocloud = (function () {
                 this.map = new L.map(defaults.el);
                 lControl = L.control.layers([], [])
                 this.map.addControl(lControl);
-                this.map.attributionControl.setPrefix('');
-                this.map.addControl(new L.Control.Attribution(
-                    {
-                        prefix: "Powered by <a href='http://geocloud.mapcentia.com'>MapCentia</a>"
-                    }))
+                this.map.attributionControl.setPrefix("Powered by <a href='http://geocloud.mapcentia.com'>MapCentia</a> ");
                 break;
         }
         var _map = this.map;

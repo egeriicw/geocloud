@@ -46,6 +46,11 @@ class Tweet extends postgis
         $arr = json_decode($res);
         //print_r($arr->statuses);
         foreach ($arr->statuses as $value) {
+            if (!is_object($value->coordinates)) {
+                $value->coordinates = new \stdClass();
+                $value->coordinates->type = "point";
+                $value->coordinates->coordinates = array(10.22518158,56.17566115);
+            }
             if (is_object($value->coordinates)) {
                 $bindings = array(
                     "text" => $value->text,
@@ -61,7 +66,8 @@ class Tweet extends postgis
                     "place_country_code" => $value->place->country_code,
                     "place_country" => $value->place->country,
                     "retweet_count" => $value->retweet_count,
-                    "favorite_count" => $value->favorite_count
+                    "favorite_count" => $value->favorite_count,
+                    "media" => json_encode($value->entities)
                 );
                 $features[] = array("geometry" => $value->coordinates, "type" => "Feature", "properties" => $bindings);
                 if ($store) {
@@ -81,6 +87,7 @@ class Tweet extends postgis
                         ":place_country," .
                         ":retweet_count," .
                         ":favorite_count," .
+                        ":media," .
                         "ST_GeomFromText(:the_geom,4326))";
 
                     $res = $this->prepare($sql);
