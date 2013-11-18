@@ -67,12 +67,12 @@ class Tweet extends postgis
                     "place_country" => $value->place->country,
                     "retweet_count" => $value->retweet_count,
                     "favorite_count" => $value->favorite_count,
-                    "media" => json_encode($value->entities)
+                    "entities" => json_encode($value->entities)
                 );
                 $features[] = array("geometry" => $value->coordinates, "type" => "Feature", "properties" => $bindings);
                 if ($store) {
                     $bindings['the_geom'] = "POINT(" . $value->coordinates->coordinates[0] . " " . $value->coordinates->coordinates[1] . ")";
-                    $sql = "INSERT INTO {$schema}.tweets (id,text,created_at,source,user_name,user_screen_name,user_id,place_id,place_type,place_full_name,place_country_code,place_country,retweet_count,favorite_count,media,the_geom) VALUES(" .
+                    $sql = "INSERT INTO {$schema}.tweets (id,text,created_at,source,user_name,user_screen_name,user_id,place_id,place_type,place_full_name,place_country_code,place_country,retweet_count,favorite_count,entities,the_geom) VALUES(" .
                         ":id," .
                         ":text," .
                         ":created_at," .
@@ -87,7 +87,7 @@ class Tweet extends postgis
                         ":place_country," .
                         ":retweet_count," .
                         ":favorite_count," .
-                        ":media," .
+                        ":entities," .
                         "ST_GeomFromText(:the_geom,4326))";
 
                     $res = $this->prepare($sql);

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS tweets (
     place_country character varying(255),
     retweet_count integer,
     favorite_count integer,
-    media text
+    entities text
 );
 
 
