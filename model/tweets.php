@@ -46,11 +46,11 @@ class Tweet extends postgis
         $arr = json_decode($res);
         //print_r($arr->statuses);
         foreach ($arr->statuses as $value) {
-            if (!is_object($value->coordinates)) {
+           /* if (!is_object($value->coordinates)) {
                 $value->coordinates = new \stdClass();
                 $value->coordinates->type = "point";
                 $value->coordinates->coordinates = array(10.22518158,56.17566115);
-            }
+            }*/
             if (is_object($value->coordinates)) {
                 $bindings = array(
                     "text" => $value->text,
