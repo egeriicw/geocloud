@@ -43,9 +43,10 @@ class Tweet extends postgis
             ->setGetfield($getfield)
             ->buildOauth($url, $requestMethod)
             ->performRequest();
+
+        $res = file_get_contents("kv13_parsed.json");
         $arr = json_decode($res);
-        //print_r($arr->statuses);
-        foreach ($arr->statuses as $value) {
+        foreach ($arr as $value) {
            /* if (!is_object($value->coordinates)) {
                 $value->coordinates = new \stdClass();
                 $value->coordinates->type = "point";
